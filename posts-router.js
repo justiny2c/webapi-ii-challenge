@@ -72,20 +72,26 @@ router.get("/:id/comments", (req, res) => {
 //HELP
 
 router.post("/:id/comments", (req, res) => {
-    const commentInfo = req.body
+    const commentInfo = req.body.text
 
     const id = req.params.id
+
+    const comment = {
+        post_id: id,
+        text: commentInfo
+    }
 
     if(!id){
         res.status(404).json({ message: "The post with the specified ID does not exist." })
     } else {
-        if(isValidComment(commentInfo)){
+        if(isValidComment(comment)){
             db
-            .insertComment(commentInfo)
+            .insertComment(comment)
             .then(comment => {
                 res.status(201).json(comment)
             })
             .catch(error => {
+                console.log(error)
                 res.status(500).json({ error: "There was an error while saving the comment to the database" })
             })
         } else {
